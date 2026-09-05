@@ -42,6 +42,8 @@ Esta versión, correspondiente a la **Semana 12**, parte de la base funcional de
 
 ## 🗂 Estructura del proyecto
 
+---
+
 restaurante_app/
 │
 ├── datos/
@@ -62,6 +64,8 @@ restaurante_app/
 │
 ├── main.py                 # Punto de arranque + menú interactivo
 └── README.md                # Este archivo
+
+---
 
 **Vista jerárquica del paquete:**
 
