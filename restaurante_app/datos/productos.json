@@ -1,0 +1,16 @@
+[
+    {
+        "codigo": "0001",
+        "nombre": "Pizza",
+        "categoria": "Comida rápida",
+        "precio": 3.25,
+        "stock": 18
+    },
+    {
+        "codigo": "0002",
+        "nombre": "Limonda",
+        "categoria": "Bebida",
+        "precio": 1.5,
+        "stock": 30
+    }
+]
