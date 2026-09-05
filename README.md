@@ -42,7 +42,7 @@ Esta versión, correspondiente a la **Semana 12**, parte de la base funcional de
 
 ## 🗂 Estructura del proyecto
 
----
+```
 
 restaurante_app/
 │
@@ -65,9 +65,11 @@ restaurante_app/
 ├── main.py                 # Punto de arranque + menú interactivo
 └── README.md                # Este archivo
 
----
+```
 
 **Vista jerárquica del paquete:**
+
+```mermaid
 
     graph TD
         A[restaurante_app] --> DAT[datos/]
@@ -97,7 +99,7 @@ restaurante_app/
         style B3 fill:#27ae60,color:#fff
         style B4 fill:#8e44ad,color:#fff
 
----
+```
 
 ## 🧩 Responsabilidad de cada componente
 
