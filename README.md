@@ -276,12 +276,15 @@ Si se intenta vender una cantidad mayor al stock disponible, la operación se re
     4. Eliminar producto
     5. Listar productos
     6. Registrar usuario
-    7. Listar usuarios
-    8. Mostrar categorías
-    9. Vender producto
-    10. Consultar ventas de un usuario
-    11. Listar todas las ventas
-    12. Salir
+    7. Buscar usuario
+    8. Actualizar usuario
+    9. Eliminar usuario
+    10. Listar usuarios
+    11. Mostrar categorías
+    12. Vender producto
+    13. Consultar ventas de un usuario
+    14. Listar todas las ventas
+    15. Salir
 
 El menú no cambió esta semana: las mismas 12 opciones ahora se resuelven usando los índices en memoria.
 
