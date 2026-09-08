@@ -125,6 +125,45 @@ class Restaurante:
         identificacion = identificacion.strip()
         return self._usuarios_por_identificacion.get(identificacion)
 
+    def actualizar_usuario(
+        self,
+        identificacion: str,
+        nombre: str | None = None,
+        correo: str | None = None,
+    ) -> bool:
+        # Operacion que faltaba: actualizar los datos de un usuario ya
+        # registrado, siguiendo el mismo patron que actualizar_producto().
+        usuario = self.buscar_usuario(identificacion)
+        if usuario is None:
+            return False
+
+        if nombre is not None and nombre.strip() != "":
+            usuario.nombre = nombre
+        if correo is not None and correo.strip() != "":
+            usuario.correo = correo
+
+        return True
+
+    def usuario_tiene_ventas(self, identificacion: str) -> bool:
+        # MEJORA SEMANA 12: verificar en dict evita recorrer toda la lista
+        # de ventas. Se usa para impedir eliminar un usuario con historial.
+        identificacion = identificacion.strip()
+        return len(self._ventas_por_usuario.get(identificacion, [])) > 0
+
+    def eliminar_usuario(self, identificacion: str) -> bool:
+        # Operacion que faltaba: eliminar un usuario ya registrado.
+        # No se elimina si el usuario ya tiene ventas asociadas, para no
+        # dejar registros de Venta con una identificacion inexistente.
+        usuario = self.buscar_usuario(identificacion)
+        if usuario is None:
+            return False
+        if self.usuario_tiene_ventas(usuario.identificacion):
+            return False
+
+        self._usuarios.remove(usuario)
+        self._usuarios_por_identificacion.pop(usuario.identificacion, None)
+        return True
+
     def listar_usuarios(self) -> list[Usuario]:
         return self._usuarios.copy()
 
