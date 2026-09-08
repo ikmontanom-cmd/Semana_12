@@ -18,13 +18,16 @@ OPCIONES_MENU: List[Tuple[str, str]] = [
     ("4", "Eliminar producto"),
     ("5", "Listar productos"),
     ("6", "Registrar usuario"),
-    ("7", "Listar usuarios"),
-    ("8", "Mostrar categorías"),
+    ("7", "Buscar usuario"),
+    ("8", "Actualizar usuario"),
+    ("9", "Eliminar usuario"),
+    ("10", "Listar usuarios"),
+    ("11", "Mostrar categorías"),
     # MEJORA SEMANA 11: nuevas opciones para la relacion Usuario + Producto -> Venta.
-    ("9", "Vender producto"),
-    ("10", "Consultar ventas de un usuario"),
-    ("11", "Listar todas las ventas"),
-    ("12", "Salir"),
+    ("12", "Vender producto"),
+    ("13", "Consultar ventas de un usuario"),
+    ("14", "Listar todas las ventas"),
+    ("15", "Salir"),
 ]
 
 SEPARADOR_DOBLE = "=" * 40
@@ -41,13 +44,13 @@ def mostrar_menu() -> None:
         if numero == "6":
             print(SEPARADOR_SIMPLE)
 
-        if numero == "8":
-            print(SEPARADOR_SIMPLE)
-
-        if numero == "9":
+        if numero == "11":
             print(SEPARADOR_SIMPLE)
 
         if numero == "12":
+            print(SEPARADOR_SIMPLE)
+
+        if numero == "15":
             print(SEPARADOR_SIMPLE)
 
         print(f"{numero}. {descripcion}")
@@ -116,14 +119,12 @@ def guardar_productos(archivo_servicio: ArchivoServicio, restaurante: Restaurant
 
 
 def guardar_usuarios(archivo_servicio: ArchivoServicio, restaurante: Restaurante) -> None:
-    # MEJORA SEMANA 11: antes los usuarios no se guardaban en ningun archivo.
     guardado = archivo_servicio.guardar_usuarios(restaurante.listar_usuarios())
     if not guardado:
         print("Los cambios de usuarios no pudieron guardarse en el archivo.")
 
 
 def guardar_ventas(archivo_servicio: ArchivoServicio, restaurante: Restaurante) -> None:
-    # MEJORA SEMANA 11: nueva persistencia de ventas.
     guardado = archivo_servicio.guardar_ventas(restaurante.listar_ventas())
     if not guardado:
         print("Los cambios de ventas no pudieron guardarse en el archivo.")
@@ -144,7 +145,6 @@ def opcion_registrar_producto(
     nombre = input("Nombre: ").strip()
     categoria = input("Categoría: ").strip()
     precio = leer_precio("Precio: ")
-    # MEJORA SEMANA 11: se solicita el stock inicial del producto.
     stock = leer_entero("Stock inicial: ", 0)
 
     try:
@@ -350,7 +350,6 @@ def opcion_registrar_usuario(
             f"Usuario '{usuario.nombre}' "
             "registrado correctamente."
         )
-        # MEJORA SEMANA 11: antes el usuario no se guardaba en ningun archivo.
         guardar_usuarios(archivo_servicio, restaurante)
     else:
         print(
@@ -360,7 +359,117 @@ def opcion_registrar_usuario(
 
 
 # ==========================================================
-# OPCIÓN 7: LISTAR USUARIOS
+# OPCIÓN 7: BUSCAR USUARIO
+# ==========================================================
+
+def opcion_buscar_usuario(
+    restaurante: Restaurante
+) -> None:
+
+    print("\n--- Buscar usuario ---")
+
+    identificacion = input(
+        "Identificación a buscar: "
+    ).strip()
+
+    usuario = restaurante.buscar_usuario(identificacion)
+
+    if usuario is not None:
+        print("Usuario encontrado:")
+        print(usuario)
+    else:
+        print(
+            f"No se encontró ningún usuario "
+            f"con la identificación '{identificacion}'."
+        )
+
+
+# ==========================================================
+# OPCIÓN 8: ACTUALIZAR USUARIO
+# ==========================================================
+
+def opcion_actualizar_usuario(
+    restaurante: Restaurante,
+    archivo_servicio: ArchivoServicio
+) -> None:
+
+    print("\n--- Actualizar usuario ---")
+
+    identificacion = input(
+        "Identificación del usuario a actualizar: "
+    ).strip()
+
+    if restaurante.buscar_usuario(identificacion) is None:
+        print(
+            f"No se encontró ningún usuario "
+            f"con la identificación '{identificacion}'."
+        )
+        return
+
+    print(
+        "Deje el campo vacío si no desea modificarlo."
+    )
+
+    nombre = input("Nuevo nombre: ").strip()
+    correo = input("Nuevo correo: ").strip()
+
+    try:
+        actualizado = restaurante.actualizar_usuario(
+            identificacion=identificacion,
+            nombre=nombre if nombre != "" else None,
+            correo=correo if correo != "" else None,
+        )
+
+    except ValueError as error:
+        print(
+            f"No se pudo actualizar el usuario: {error}"
+        )
+        return
+
+    if actualizado:
+        print("Usuario actualizado correctamente.")
+        guardar_usuarios(archivo_servicio, restaurante)
+    else:
+        print("No se pudo actualizar el usuario.")
+
+
+# ==========================================================
+# OPCIÓN 9: ELIMINAR USUARIO
+# ==========================================================
+
+def opcion_eliminar_usuario(
+    restaurante: Restaurante,
+    archivo_servicio: ArchivoServicio
+) -> None:
+
+    print("\n--- Eliminar usuario ---")
+
+    identificacion = input(
+        "Identificación del usuario a eliminar: "
+    ).strip()
+
+    if restaurante.buscar_usuario(identificacion) is None:
+        print(
+            f"No se encontró ningún usuario "
+            f"con la identificación '{identificacion}'."
+        )
+        return
+
+    if restaurante.usuario_tiene_ventas(identificacion):
+        print(
+            "No se puede eliminar: el usuario ya tiene ventas registradas."
+        )
+        return
+
+    if restaurante.eliminar_usuario(identificacion):
+        print("Usuario eliminado correctamente.")
+        guardar_usuarios(archivo_servicio, restaurante)
+    else:
+        print("No se pudo eliminar el usuario.")
+
+
+# ==========================================================
+# OPCIÓN 10: LISTAR USUARIOS
 # ==========================================================
 
 def opcion_listar_usuarios(
@@ -380,7 +489,7 @@ def opcion_listar_usuarios(
 
 
 # ==========================================================
-# OPCIÓN 8: MOSTRAR CATEGORÍAS
+# OPCIÓN 11: MOSTRAR CATEGORÍAS
 # ==========================================================
 
 def opcion_mostrar_categorias(
@@ -402,7 +511,7 @@ def opcion_mostrar_categorias(
 
 
 # ==========================================================
-# OPCIÓN 9: VENDER PRODUCTO (MEJORA SEMANA 11)
+# OPCIÓN 12: VENDER PRODUCTO (MEJORA SEMANA 11)
 # ==========================================================
 
 def opcion_vender_producto(
@@ -458,7 +567,6 @@ def opcion_vender_producto(
             f"Venta registrada correctamente. "
             f"Stock actual de '{producto.nombre}': {producto.stock}."
         )
-        # Una venta modifica dos colecciones: se guardan ambas.
         guardar_ventas(archivo_servicio, restaurante)
         guardar_productos(archivo_servicio, restaurante)
     else:
@@ -466,7 +574,7 @@ def opcion_vender_producto(
 
 
 # ==========================================================
-# OPCIÓN 10: CONSULTAR VENTAS DE UN USUARIO (MEJORA SEMANA 11)
+# OPCIÓN 13: CONSULTAR VENTAS DE UN USUARIO (MEJORA SEMANA 11)
 # ==========================================================
 
 def opcion_consultar_ventas_usuario(
@@ -505,7 +613,7 @@ def opcion_consultar_ventas_usuario(
 
 
 # ==========================================================
-# OPCIÓN 11: LISTAR TODAS LAS VENTAS (MEJORA SEMANA 11)
+# OPCIÓN 14: LISTAR TODAS LAS VENTAS (MEJORA SEMANA 11)
 # ==========================================================
 
 def opcion_listar_ventas(
@@ -525,7 +633,7 @@ def opcion_listar_ventas(
 
 
 # ==========================================================
-# OPCIÓN 12: SALIR
+# OPCIÓN 15: SALIR
 # ==========================================================
 
 def opcion_salir() -> None:
@@ -551,12 +659,15 @@ def construir_acciones_menu(
         "4": lambda: opcion_eliminar_producto(restaurante, archivo_servicio),
         "5": lambda: opcion_listar_productos(restaurante),
         "6": lambda: opcion_registrar_usuario(restaurante, archivo_servicio),
-        "7": lambda: opcion_listar_usuarios(restaurante),
-        "8": lambda: opcion_mostrar_categorias(restaurante),
-        "9": lambda: opcion_vender_producto(restaurante, archivo_servicio),
-        "10": lambda: opcion_consultar_ventas_usuario(restaurante),
-        "11": lambda: opcion_listar_ventas(restaurante),
-        "12": lambda: opcion_salir(),
+        "7": lambda: opcion_buscar_usuario(restaurante),
+        "8": lambda: opcion_actualizar_usuario(restaurante, archivo_servicio),
+        "9": lambda: opcion_eliminar_usuario(restaurante, archivo_servicio),
+        "10": lambda: opcion_listar_usuarios(restaurante),
+        "11": lambda: opcion_mostrar_categorias(restaurante),
+        "12": lambda: opcion_vender_producto(restaurante, archivo_servicio),
+        "13": lambda: opcion_consultar_ventas_usuario(restaurante),
+        "14": lambda: opcion_listar_ventas(restaurante),
+        "15": lambda: opcion_salir(),
     }
 
 
@@ -570,8 +681,6 @@ def main() -> None:
     archivo_servicio = ArchivoServicio(str(ruta_datos))
 
     productos_iniciales = archivo_servicio.cargar_productos()
-    # MEJORA SEMANA 11: usuarios y ventas tambien se recuperan al iniciar
-    # (antes usuarios siempre iniciaba vacio y ventas no existia).
     usuarios_iniciales = archivo_servicio.cargar_usuarios()
     ventas_iniciales = archivo_servicio.cargar_ventas()
 
@@ -602,7 +711,7 @@ def main() -> None:
 
         accion()
 
-        if opcion == "12":
+        if opcion == "15":
             break
 
 
